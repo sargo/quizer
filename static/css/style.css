@@ -1,0 +1,21 @@
+body {
+    font-family: latoregular, Helvetica, Arial;
+    background-color: #EEE;
+}
+#main {
+    width: 1160px;
+    margin: 2em auto;
+    padding: 0 2em;
+}
+#content {
+    border: 1px solid #AAA;
+    background-color: #FFF;
+
+    border: 1px solid black;
+    clear: both;
+    padding: 2em;
+}
+
+p.warn {
+    color: #ff8000;
+}

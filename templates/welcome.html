@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>
+        Dzięki <strong>Quizer</strong> sprawdzisz swoją wiedzę!
+    </p>
+    <p>
+        Szybko odpowiadaj na pytania, bo z każdą chwilą zminejsza się premia
+        za prawidłową odowiedź.
+    </p>
+    <form method="POST">
+        {% if username %}
+            <p>Witaj, {{ username }}</p>
+        {% else %}
+            <label for="username">Pseudonim</label>
+            {% if username == '' %}
+                <p class="warn">Pole nie może być puste!<p>
+            {% endif %}
+            <div>
+                <input type="text" name="username" />
+            </div>
+        {% endif %}
+
+        <input type="submit" value="Start" />
+    </form>
+{% endblock content %}
