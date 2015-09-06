@@ -17,6 +17,7 @@ app.config.update(dict(
     DEBUG=True,
     SECRET_KEY='development key',
     DATA_FILE='data/quiz.csv',
+    TIME_TRESHOLDS=[10, 30],
 ))
 app.config.from_envvar('QUIZER_SETTINGS', silent=True)
 
@@ -52,9 +53,10 @@ def question_page():
     if request.method == 'POST':
         if request.form.get('answer') == session['correct_answer']:
             diff_time = time.time() - session['start_time']
-            if diff_time < 10:
+            time_thresholds = app.config['TIME_TRESHOLDS']
+            if diff_time < time_thresholds[0]:
                 session['points'] += 3
-            elif diff_time < 30:
+            elif diff_time < time_thresholds[1]:
                 session['points'] += 2
             else:
                 session['points'] += 1

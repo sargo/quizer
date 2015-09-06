@@ -2,6 +2,8 @@
 """
 Quizer - tests.
 """
+import time
+
 import quizer
 import unittest
 
@@ -17,6 +19,7 @@ class QuizerTestCase(unittest.TestCase):
         """
         quizer.app.config['TESTING'] = True
         quizer.app.config['DATA_FILE'] = 'data/test.csv'
+        quizer.app.config['TIME_TRESHOLDS'] = [0.1, 0.2]
         self.client = quizer.app.test_client()
 
     def tearDown(self):
@@ -87,14 +90,15 @@ class QuizerTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('wynik to: 0/15 (0%)', resp.data)
 
-    def test_max_points(self):
+    def answer_questions(self, delay=0):
         """
-        Checks result calculation when all ansers are correct.
+        Give 5 correct answers.
         """
         resp = self.client.post('/', data={'username': 'TEST'})
         for i in range(5):
             resp = self.client.get('/pytanie')
             self.assertEqual(resp.status_code, 200)
+            time.sleep(delay)
             resp = self.client.post('/pytanie', data={'answer': 'A'})
             self.assertEqual(resp.status_code, 302)
 
@@ -105,7 +109,28 @@ class QuizerTestCase(unittest.TestCase):
 
         resp = self.client.get('/wynik')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('wynik to: 15/15 (100%)', resp.data)
+        return resp.data
+
+    def test_max_points(self):
+        """
+        Checks result calculation when all ansers are correct.
+        """
+        resp_data = self.answer_questions(delay=0)
+        self.assertIn('wynik to: 15/15 (100%)', resp_data)
+
+    def test_short_delay(self):
+        """
+        Checks calculation when all ansers are correct but with short delay.
+        """
+        resp_data = self.answer_questions(delay=0.15)
+        self.assertIn('wynik to: 10/15 (66%)', resp_data)
+
+    def test_long_delay(self):
+        """
+        Checks calculation when all ansers are correct but with long delay.
+        """
+        resp_data = self.answer_questions(delay=0.25)
+        self.assertIn('wynik to: 5/15 (33%)', resp_data)
 
 
 if __name__ == '__main__':
